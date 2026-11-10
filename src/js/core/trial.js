@@ -4,11 +4,11 @@ PUSHING/RUNNING A CUSTOM SINGLE TRIAL (*singleTrial)
 ===============================================================
 */
 function runSingleTrial(
-    stripe_angle_top,
-    rotation,
+    first_dot_type,
+    // rotation,
     identical,
-    count,
-    difficulty,
+    // count,
+    // difficulty,
     group,
     timelineTrialsToPush,
     trialType,
@@ -55,15 +55,37 @@ function runSingleTrial(
         },
     };
 
-    /*--------------------------- Experiment specific variables ---------------------------*/
-    var personLeft = `${stimFolder}person_${stripe_angle_top}.png`
-    if (identical == true){
-        var personRight = personLeft
-    } else {
-        var personRight = `${stimFolder}person_${stripe_angle_top-difficulty}.png`
-    }
     
-    var persistent_prompt = `<div style="position: fixed; top: 90%; left: 10%; transform: translateX(-50%); text-align: center;">f = same stripes<br> j = different stripes </div>`;
+    /*--------------------------- Experiment specific variables ---------------------------*/
+    var dotLeft = `${stimFolder}${first_dot_type}.png`;
+    var dotRight;
+    var second_dot;
+    
+    if (identical == true){
+        dotRight = dotLeft;
+    } else if (first_dot_type.includes('bottom')) {
+        if (first_dot_type.includes("Left")) {
+            second_dot = "bottomRight";
+            dotRight = `${stimFolder}${second_dot}.png`
+        } else {
+            second_dot = "bottomLeft";
+            dotRight = `${stimFolder}${second_dot}.png`
+        }
+    } else if (first_dot_type.includes('top')) {
+        if (first_dot_type.includes("Left")) {
+            second_dot = "topRight";
+            dotRight = `${stimFolder}${second_dot}.png`
+        } else {
+            second_dot = "topLeft";
+            dotRight = `${stimFolder}${second_dot}.png`
+        }
+    } else {
+        console.log("error: failed to define secondDot");
+    };       
+   
+
+    
+    var persistent_prompt = `<div style="position: fixed; top: 90%; left: 50%; transform: translateX(-50%); text-align: center;">f = same cube<br> j = different cube </div>`;
 
     /* testing a slider */
     // tarSize = 40;
@@ -104,7 +126,7 @@ function runSingleTrial(
 
 
     /* Rotation and Reflection Logic */
-    var poss_trialRotations = [0, 180]; // this one is in degrees!
+    var poss_trialRotations = [0]; // this one is in degrees!
     var trialRotation = randomChoice(poss_trialRotations, 1)[0];
 
     var poss_scaling = [1, -1]; //as in transform: scaleX(-1)
@@ -117,8 +139,8 @@ function runSingleTrial(
     /* COLORS FOR REFERENCE: "red", "orange1", "orange2" "green1", "green3", "blue2", "blue3", "blue4", "blue5", "purple", "magenta", "pink" */
     
     
-    var allPeople = shuffle(allPeopleColors);
-    all_points = calcPlacements(CENTROIDS, rotation, group, trialReflection, count);
+    // var allPeople = shuffle(allPeopleColors);
+    // all_points = calcPlacements(CENTROIDS, rotation, group, trialReflection, count);
 
     //"allStanding","allSitting","halfHorizontal","halfVertical"
 
@@ -132,31 +154,31 @@ function runSingleTrial(
     p10 - p12: LOWER RIGHT
     
     */
-    
-    var htmloutput = `<div style= "width: 600px; height: 600px; position: absolute; top: 50%; left: 50%; z-index: -999; transform: translate(-50%, -50%) rotate(${trialRotation}deg) scaleX(${trialReflection});"><img src="${stimFolder}background_border.png" style="width: ${imgBorderWidth}px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></img>`;
-        for(var i = 0; i < all_points.length; i++) {
-            if(group === "allStanding" || group === "standingOut") { //note the triple equals is on purpose (apparently it's the js version of .equals?)
-                htmloutput += `<img src="${stimFolder}${allPeople[i]}.png" style = "position: absolute; top: ${all_points[i].y}px; left: ${all_points[i].x}px; width: ${imgPeopleWidth}px; transform: translate(-50%, -50%) rotate(${all_points[i].r}deg);"></img>`;
-            };
-            if(group === "halfHorizontal") {
-                if(i <= 5) {
-                    htmloutput += `<img src="${stimFolder}${allPeople[i]}.png" style = "position: absolute; top: ${all_points[i].y}px; left: ${all_points[i].x}px; width: ${imgPeopleWidth}px; transform: translate(-50%, -50%) rotate(${all_points[i].r}deg);"></img>`;
-                } else {
-                    htmloutput += `<img src="${stimFolder}sitting/${allPeople[i]}.png" style = "position: absolute; top: ${all_points[i].y}px; left: ${all_points[i].x}px; width: ${imgPeopleWidth}px; transform: translate(-50%, -50%) rotate(${all_points[i].r}deg);"></img>`;
-                }
-            };
-            if(group === "halfVertical") {
-                if(i <= 2 || 6 >= i <= 8) {
-                    htmloutput += `<img src="${stimFolder}sitting/${allPeople[i]}.png" style = "position: absolute; top: ${all_points[i].y}px; left: ${all_points[i].x}px; width: ${imgPeopleWidth}px; transform: translate(-50%, -50%) rotate(${all_points[i].r}deg);"></img>`;
-                } else {
-                    htmloutput += `<img src="${stimFolder}${allPeople[i]}.png" style = "position: absolute; top: ${all_points[i].y}px; left: ${all_points[i].x}px; width: ${imgPeopleWidth}px; transform: translate(-50%, -50%) rotate(${all_points[i].r}deg);"></img>`;
-                }
-            };
-            if(group === "allSitting" || group === "sittingOut") {
-                htmloutput += `<img src="${stimFolder}sitting/${allPeople[i]}.png" style = "position: absolute; top: ${all_points[i].y}px; left: ${all_points[i].x}px; width: ${imgPeopleWidth}px; transform: translate(-50%, -50%) rotate(${all_points[i].r}deg);"></img>`;
-            };
-        }; // end for loop!
-        htmloutput += `</div>`;
+
+    var htmloutput = `<div style= "width: ${imgBackWidth}px; height: ${imgBackHeight}px; position: absolute; top: ${h/2-imgBackHeight/2}px; left: ${w/2-imgBackWidth/2}px; top: 50%; left: 50%; z-index: -999; transform: translate(-50%, -50%) scaleX(${trialReflection}) ;"><img src="${stimFolder}${group}.png" style="width: ${imgBackWidth}px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></img>`;
+        // for(var i = 0; i < all_points.length; i++) {
+        //     if(group === "allStanding" || group === "standingOut") { //note the triple equals is on purpose (apparently it's the js version of .equals?)
+        //         htmloutput += `<img src="${stimFolder}${allPeople[i]}.png" style = "position: absolute; top: ${all_points[i].y}px; left: ${all_points[i].x}px; width: ${imgPeopleWidth}px; transform: translate(-50%, -50%) rotate(${all_points[i].r}deg);"></img>`;
+        //     };
+        //     if(group === "halfHorizontal") {
+        //         if(i <= 5) {
+        //             htmloutput += `<img src="${stimFolder}${allPeople[i]}.png" style = "position: absolute; top: ${all_points[i].y}px; left: ${all_points[i].x}px; width: ${imgPeopleWidth}px; transform: translate(-50%, -50%) rotate(${all_points[i].r}deg);"></img>`;
+        //         } else {
+        //             htmloutput += `<img src="${stimFolder}sitting/${allPeople[i]}.png" style = "position: absolute; top: ${all_points[i].y}px; left: ${all_points[i].x}px; width: ${imgPeopleWidth}px; transform: translate(-50%, -50%) rotate(${all_points[i].r}deg);"></img>`;
+        //         }
+        //     };
+        //     if(group === "halfVertical") {
+        //         if(i <= 2 || 6 >= i <= 8) {
+        //             htmloutput += `<img src="${stimFolder}sitting/${allPeople[i]}.png" style = "position: absolute; top: ${all_points[i].y}px; left: ${all_points[i].x}px; width: ${imgPeopleWidth}px; transform: translate(-50%, -50%) rotate(${all_points[i].r}deg);"></img>`;
+        //         } else {
+        //             htmloutput += `<img src="${stimFolder}${allPeople[i]}.png" style = "position: absolute; top: ${all_points[i].y}px; left: ${all_points[i].x}px; width: ${imgPeopleWidth}px; transform: translate(-50%, -50%) rotate(${all_points[i].r}deg);"></img>`;
+        //         }
+        //     };
+        //     if(group === "allSitting" || group === "sittingOut") {
+        //         htmloutput += `<img src="${stimFolder}sitting/${allPeople[i]}.png" style = "position: absolute; top: ${all_points[i].y}px; left: ${all_points[i].x}px; width: ${imgPeopleWidth}px; transform: translate(-50%, -50%) rotate(${all_points[i].r}deg);"></img>`;
+        //     };
+        // }; // end for loop!
+    htmloutput += `</div>`;
 
 
 
@@ -167,7 +189,7 @@ function runSingleTrial(
         type: jsPsychHtmlKeyboardResponse,
         stimulus: htmloutput,
         choices: 'NO_KEYS',
-        trial_duration: PERSON_ONE_DISP_TIME,
+        trial_duration: randomChoice(DOT_ONE_DISP_TIME, 1)[0],
         response_ends_trial: false,
         prompt: `${persistent_prompt}`,
         data: {
@@ -181,11 +203,11 @@ function runSingleTrial(
         type: jsPsychHtmlKeyboardResponse,
         stimulus: function() {
             htmloutput = htmloutput.replace(`</div>`, ``);
-            htmloutput += `<img src="${personLeft}" style="width: ${imgStripePeopleWidth}px; position: absolute; top: ${imgBackHeight*.005-(imgPeopleHeight/2)}px; left: ${imgBackWidth*.61-(imgPeopleWidth/2)}px; z-index: 999; transform: rotate(180deg);"></img></div>`;
+            htmloutput += `<img src="${dotLeft}" style="width: ${imgDotWidth}px; position: absolute; top: ${imgBackHeight*.96-(imgDotHeight/2)}px; left: ${imgBackWidth*0.50-(imgDotWidth/2)}px; z-index: 999; transform: scaleX(${trialReflection});"></img></div>`;
             return htmloutput;
         },
         choices: 'NO_KEYS',
-        trial_duration: PERSON_ONE_DISP_TIME,
+        trial_duration: DOT_TWO_DISP_TIME,
         response_ends_trial: false,
         prompt: `${persistent_prompt}`,
         data: {
@@ -193,14 +215,14 @@ function runSingleTrial(
         }
     }; // dispHalfScene
 
+   
 
-    
 
     var dispFullScene = {
         type: jsPsychHtmlKeyboardResponse,
         stimulus: function() {
             htmloutput = htmloutput.replace(`</div>`, ``);
-            htmloutput += `<img src="${personRight}" style="width: ${imgStripePeopleWidth}px; position: absolute; top: ${imgBackHeight*.86-(imgPeopleHeight/2)}px; left: ${imgBackWidth*0.275-(imgPeopleWidth/2)}px;"></img></div>`
+            htmloutput += `<img src="${dotRight}" style="width: ${imgDotWidth}px; position: absolute; top: ${imgBackHeight*.3975-(imgDotHeight/2)}px; left: ${imgBackWidth*.470-(imgDotWidth/2)}px; transform: scaleX(${trialReflection});"></img></div>`
             return htmloutput;
         },
         choices: ['f', 'j'],
@@ -210,14 +232,14 @@ function runSingleTrial(
         data: {
             trial_category: 'answer'+trialType,
             // trial_stimulus: thisStim,
-            trial_rotation: trialRotation,
-            shapes_rotation: rotation,
+            //trial_rotation: trialRotation,
+            //shapes_rotation: rotation,
             trial_reflection: trialReflection,
-            stripe_angle_top: stripe_angle_top,
-            stripe_angle_bottom: stripe_angle_top-difficulty,
-            difficulty: difficulty,
+            //stripe_angle_top: stripe_angle_top,
+            //stripe_angle_bottom: stripe_angle_top-difficulty,
+            //difficulty: difficulty,
             background_group: group,
-            group_size: count,
+            //group_size: count,
             identical: identical,
             screen_width: w,
             screen_height: h,
@@ -259,10 +281,10 @@ function runSingleTrial(
 
     var fixation = {
         type: jsPsychHtmlKeyboardResponse,
-        stimulus: `<div style="position: absolute; top: ${h/2-imgBorderHeight/2}px; left: ${w/2-imgBorderWidth/2}px; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(${trialRotation}deg) scaleX(${trialReflection});">        
-                <img src="${stimFolder}background_border.png" style="width: ${imgBorderWidth}px; display:block;"></img> 
+        stimulus: `<div style="width: ${imgBackWidth}px; height: ${imgBackHeight}px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(${trialRotation}deg) scaleX(${trialReflection});">        
+        <img src="${stimFolder}background.png" style="width: 100%; height: 100%; display: block"></img> 
         </div>
-        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size:60px; z-index:2">+</div>`,
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size:75px; z-index:2; color: red;">+</div>`,
         prompt: `${persistent_prompt}`,
         choices: "NO_KEYS",
         trial_duration: FIXATION_DISP_TIME,
