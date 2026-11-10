@@ -85,7 +85,7 @@ function runSingleTrial(
    
 
     
-    var persistent_prompt = `<div style="position: fixed; top: 90%; left: 50%; transform: translateX(-50%); text-align: center;">f = same cube<br> j = different cube </div>`;
+    var persistent_prompt = `<div style="position: fixed; top: 90%; left: 50%; transform: translateX(-50%); text-align: center;">f = same object<br> j = different object </div>`;
 
     /* testing a slider */
     // tarSize = 40;
@@ -231,15 +231,10 @@ function runSingleTrial(
         prompt: `${persistent_prompt}`,
         data: {
             trial_category: 'answer'+trialType,
-            // trial_stimulus: thisStim,
-            //trial_rotation: trialRotation,
-            //shapes_rotation: rotation,
+            dot_top: dotRight,
+            dot_bottom: dotLeft, 
             trial_reflection: trialReflection,
-            //stripe_angle_top: stripe_angle_top,
-            //stripe_angle_bottom: stripe_angle_top-difficulty,
-            //difficulty: difficulty,
             background_group: group,
-            //group_size: count,
             identical: identical,
             screen_width: w,
             screen_height: h,

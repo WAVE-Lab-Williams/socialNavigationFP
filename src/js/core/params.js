@@ -6,7 +6,7 @@ Defining Parameter Variables
 
 var stimFolder = 'src/assets/stimuli/dots/'
 
-var runIntro = false;
+var runIntro = true;
 var runInstr = true;
 var runExpt = true;
 var runClose = true;
@@ -17,7 +17,7 @@ var runPreload = true;
 var FIXATION_DISP_TIME = 900;
 var BACKGROUND_DISP_TIME = 1000;
 var DOT_ONE_DISP_TIME = [1000, 2000, 4000, 5000]; //randomly sampled in trial.js!
-var DOT_TWO_DISP_TIME = 150; //change? NOTE: this is the gap between dot 1 and dot 2 in ms
+var DOT_TWO_DISP_TIME = 200; //change? NOTE: this is the gap between dot 1 and dot 2 in ms
 // var U_LEFT_CENTROID = [300, 300];
 // var U_RIGHT_CENTROID = [425, 200];
 // var L_LEFT_CENTROID = [175, 400];

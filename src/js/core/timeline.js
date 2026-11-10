@@ -243,7 +243,7 @@ var poss_identical = [true, false];
 var poss_groups = ["fiveNotPassable","fivePassable", "groupsNotPassable", "groupsPassable"];
 
 var factors = {
-    // first_dot_type: poss_dot_types,
+    //first_dot_type: poss_dot_types,
     // rotation: poss_rotations,
     // count: poss_count,
     identical: poss_identical,
@@ -251,8 +251,11 @@ var factors = {
     group: poss_groups,
 }
 
-var full_design = jsPsych.randomization.factorial(factors, 1);
-//console.log(full_design.length);
+var design_firstHalf = jsPsych.randomization.factorial(factors, 1);
+var design_secondHalf = jsPsych.randomization.factorial(factors, 1);
+
+var full_design = design_firstHalf.concat(design_secondHalf);
+console.log(full_design.length);
 
 /* -------  Set Preload Images for Expt (*preload_expt) -------------- */
 for (var i = 0; i < poss_dot_types.length; i++) {
@@ -264,7 +267,7 @@ for (var i = 0; i < poss_groups.length; i++) {
 forPreload.push(`${stimFolder}background.png`);
 /* ------- timeline expt push (*pushExpt ) -------------- */
 
-var first_dot_type;
+// var first_dot_type; // its a dummy
 
 for (var elem = 0; elem < full_design.length; elem++) {
     first_dot_type = randomChoice(poss_dot_types,1)[0]
