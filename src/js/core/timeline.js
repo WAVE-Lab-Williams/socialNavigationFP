@@ -181,8 +181,8 @@ INSTR PROCEDURE (*sec_instr)
 //     forPreload.push(`${stimFolder}${demo_circle_colors[i]}-circle.png`);
 // }
 
-forPreload.push(`${stimFolder}person_example_different.png`);
-forPreload.push(`${stimFolder}person_example_same.png`);
+//forPreload.push(`${stimFolder}person_example_different.png`); REPLACE THIS!
+//forPreload.push(`${stimFolder}person_example_same.png`);
 
 // //decide what the parameters for the demo trial should be. Sometimes you hardcode this, sometimes you randomly choose from the options you defined above.
 // var thisDemoCircle = randomChoice(demo_circle_colors,1)[0];
@@ -235,49 +235,48 @@ EXPERIMENT SECTION (*sec_expt)
 
 /* -------- defining factors && exptdesign (*factors) --------*/
 
-var poss_stripe_angles = [40, 60]; // keep this out here for preload
+var poss_dot_types = ["bottomLeft", "topLeft", "topRight", "bottomRight"];
 var poss_identical = [true, false];
-var poss_difficulty = [20];
-var poss_count = [3, 5];
-var poss_rotations = [0, Math.PI];
-var poss_groups = ["allStanding","allSitting", "standingOut", "sittingOut"];
+// var poss_difficulty = [20];
+// var poss_count = [3, 5];
+// var poss_rotations = [0, Math.PI];
+var poss_groups = ["fiveNotPassable","fivePassable", "groupsNotPassable", "groupsPassable"];
 
 var factors = {
-   // stripe_angle_top: poss_stripe_angles,
-    rotation: poss_rotations,
-    count: poss_count,
+    //first_dot_type: poss_dot_types,
+    // rotation: poss_rotations,
+    // count: poss_count,
     identical: poss_identical,
-    difficulty: poss_difficulty,
+    // difficulty: poss_difficulty,
     group: poss_groups,
 }
 
-var full_design = jsPsych.randomization.factorial(factors, 1);
-//console.log(full_design.length);
+var design_firstHalf = jsPsych.randomization.factorial(factors, 1);
+var design_secondHalf = jsPsych.randomization.factorial(factors, 1);
+
+var full_design = design_firstHalf.concat(design_secondHalf);
+console.log(full_design.length);
 
 /* -------  Set Preload Images for Expt (*preload_expt) -------------- */
-for (var i = 0; i < poss_stripe_angles.length; i++) {
-     forPreload.push(`${stimFolder}person_${poss_stripe_angles[i]}.png`);
-     for (var j = 0; j < poss_difficulty.length; j++) {
-          forPreload.push(`${stimFolder}person_${poss_stripe_angles[i]-poss_difficulty[j]}.png`);
-     }
-}
-for (var i = 0; i < allPeopleColors.length; i++) { // used to be hardcoded, but because allPeopleColors is defined in params.js, which is laoded before timeline.js, we are good.
-     forPreload.push(`${stimFolder}${allPeopleColors[i]}.png`);
-     forPreload.push(`${stimFolder}sitting/${allPeopleColors[i]}.png`);
-}
-
+for (var i = 0; i < poss_dot_types.length; i++) {
+     forPreload.push(`${stimFolder}${poss_dot_types[i]}.png`);
+};
+for (var i = 0; i < poss_groups.length; i++) {
+     forPreload.push(`${stimFolder}${poss_groups[i]}.png`);
+};
+forPreload.push(`${stimFolder}background.png`);
 /* ------- timeline expt push (*pushExpt ) -------------- */
-var stripe_angle_top;
+
+// var first_dot_type; // its a dummy
 
 for (var elem = 0; elem < full_design.length; elem++) {
-    stripe_angle_top = randomChoice(poss_stripe_angles, 1)[0];
+    first_dot_type = randomChoice(poss_dot_types,1)[0]
     runSingleTrial(
-        //full_design[elem].stripe_angle_top, // use when poss_stripe_angles is part of factorials
-        stripe_angle_top, // use when randomizing for every trial.
-        full_design[elem].rotation,
+        first_dot_type,
+        // full_design[elem].rotation,
         full_design[elem].identical,
-        full_design[elem].count,
-        full_design[elem].difficulty,
+        // full_design[elem].count,
+        // full_design[elem].difficulty,
         full_design[elem].group,
         timelineexpt,
         'expt',
